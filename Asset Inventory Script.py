@@ -69,21 +69,52 @@ def get_missing_security_patches():
         patches.append(f"Error: {str(e)}")
     return patches
 
-
-
-
-
-
-# Get list of previously connected USB devices
+# Get list of previously connected USB devices (Windows only)
 def get_usb_history():
-    # TO DO: implement USB history retrieval
-    return []
-
-
-
-
-
-
+    # Check if running on Windows
+    if platform.system() != "Windows":
+        return ["Not supported on this OS"]
+    
+    # Initialize USB device list
+    usb_list = []
+    # Define registry path to check
+    reg_path = r"SYSTEM\CurrentControlSet\Enum\USBSTOR"
+    
+    try:
+        # Open registry key
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as reg:
+            # Loop through subkeys
+            for i in range(0, winreg.QueryInfoKey(reg)[0]):
+                try:
+                    # Get subkey name
+                    subkey_name = winreg.EnumKey(reg, i)
+                    print(subkey_name)
+                    # Open subkey
+                    with winreg.OpenKey(reg, subkey_name) as subkey:
+                        # Loop through sub-subkeys
+                        for j in range(0, winreg.QueryInfoKey(subkey)[0]):
+                            try:
+                                # Get sub-subkey name
+                                subsubkey_name = winreg.EnumKey(subkey, j)
+                                print(subsubkey_name)
+                                # Open sub-subkey
+                                with winreg.OpenKey(subkey, subsubkey_name) as subsubkey:
+                                    # Get USB device name
+                                    name, _ = winreg.QueryValueEx(subsubkey, "FriendlyName")
+                                    print(name)
+                                    # Add to USB list
+                                    usb_list.append({"name": name})
+                            except EnvironmentError:
+                                # Skip if error occurs
+                                continue
+                except EnvironmentError:
+                    # Skip if error occurs
+                    continue
+    except Exception as e:
+        # Add error to software list
+        usb_list.append({"error": str(e)})
+    return usb_list
+    
 # Main function
 def main():
     # Get desktop path
