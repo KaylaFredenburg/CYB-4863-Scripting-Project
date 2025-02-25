@@ -71,7 +71,7 @@ def get_missing_security_patches():
 # Get list of previously connected USB devices
 def get_usb_history():
     # Run the wmic command to get a list of USB devices
-    output = subprocess.check_output("wmic path Win32_PnPEntity where \"Caption like '%USB%'\" get Caption,PNPDeviceID", shell=True).decode('utf-8')
+    output = subprocess.check_output("wmic path Win32_PnPEntity where \"Caption like '%USB%'\" get /value", shell=True).decode('utf-8')
 
     # Split the output into individual devices
     devices = output.split("\n\n")
@@ -83,9 +83,12 @@ def get_usb_history():
     for device in devices:
         if device.strip():
             lines = device.split("\n")
-            caption = lines[0].strip()
-            pnp_device_id = lines[1].strip()
-            usb_devices.append({"Caption": caption, "PNPDeviceID": pnp_device_id})
+            device_info = {}
+            for line in lines:
+                if line.strip():
+                    key, value = line.split("=")
+                    device_info[key.strip()] = value.strip()
+            usb_devices.append(device_info)
 
     return usb_devices
 
