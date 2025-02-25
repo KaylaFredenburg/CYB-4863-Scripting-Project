@@ -2,6 +2,7 @@ import os
 import subprocess
 import platform
 import json
+
 from datetime import datetime
 
 # Import winreg only on Windows
@@ -67,52 +68,27 @@ def get_missing_security_patches():
         patches.append(f"Error: {str(e)}")
     return patches
 
-# Get list of previously connected USB devices (Windows only)
+# Get list of previously connected USB devices
 def get_usb_history():
-    # Check if running on Windows
-    if platform.system() != "Windows":
-        return ["Not supported on this OS"]
-    
-    # Initialize USB device list
-    usb_list = []
-    # Define registry path to check
-    reg_path = r"SYSTEM\CurrentControlSet\Enum\USBSTOR"
-    
-    try:
-        # Open registry key
-        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as reg:
-            # Loop through subkeys
-            for i in range(0, winreg.QueryInfoKey(reg)[0]):
-                try:
-                    # Get subkey name
-                    subkey_name = winreg.EnumKey(reg, i)
-                    print(subkey_name)
-                    # Open subkey
-                    with winreg.OpenKey(reg, subkey_name) as subkey:
-                        # Loop through sub-subkeys
-                        for j in range(0, winreg.QueryInfoKey(subkey)[0]):
-                            try:
-                                # Get sub-subkey name
-                                subsubkey_name = winreg.EnumKey(subkey, j)
-                                print(subsubkey_name)
-                                # Open sub-subkey
-                                with winreg.OpenKey(subkey, subsubkey_name) as subsubkey:
-                                    # Get USB device name
-                                    name, _ = winreg.QueryValueEx(subsubkey, "FriendlyName")
-                                    print(name)
-                                    # Add to USB list
-                                    usb_list.append({"name": name})
-                            except EnvironmentError:
-                                # Skip if error occurs
-                                continue
-                except EnvironmentError:
-                    # Skip if error occurs
-                    continue
-    except Exception as e:
-        # Add error to software list
-        usb_list.append({"error": str(e)})
-    return usb_list
-    
+    # Run the wmic command to get a list of USB devices
+    output = subprocess.check_output("wmic path Win32_PnPEntity where \"Caption like '%USB%'\" get Caption,PNPDeviceID", shell=True).decode('utf-8')
+
+    # Split the output into individual devices
+    devices = output.split("\n\n")
+
+    # Create a list to store the device information
+    usb_devices = []
+
+    # Iterate through the devices and extract the information
+    for device in devices:
+        if device.strip():
+            lines = device.split("\n")
+            caption = lines[0].strip()
+            pnp_device_id = lines[1].strip()
+            usb_devices.append({"Caption": caption, "PNPDeviceID": pnp_device_id})
+
+    return usb_devices
+
 # Main function
 def main():
     # Get desktop path
