@@ -94,8 +94,8 @@ def get_usb_history():
 
 # Main function
 def main():
-    # Get desktop path
-    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop", "system_inventory.json")
+    # Get current directory
+    current_dir = os.path.dirname(__file__)
     
     # Initialize system info dictionary
     system_info = {
@@ -108,11 +108,11 @@ def main():
     }
     
     # Save system info to JSON file
-    with open(desktop_path, "w") as f:
+    with open(os.path.join(current_dir, "system_inventory.json"), "w") as f:
         json.dump(system_info, f, indent=4)
     
     # Print success message
-    print(f"System inventory recorded at: {desktop_path}")
+    print(f"System inventory recorded at: {os.path.join(current_dir, 'system_inventory.json')}")
 
 # Run main function
 if __name__ == "__main__":
