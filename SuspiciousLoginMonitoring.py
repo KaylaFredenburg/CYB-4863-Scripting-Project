@@ -27,25 +27,22 @@ def analyze_logs():
                     match = re.search(r"(?:Failed|failure|invalid).*?from\s+(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line, re.IGNORECASE)
                     if match:
                         ip = match.group("ip")
-                        failed_attempts[ip].append(time.time())
-
                         now = time.time()
-                        recent_attempts = [t for t in failed_attempts[ip] if now - t < time_window]
-                        failed_attempts[ip] = recent_attempts  
 
-                        if len(recent_attempts) >= threshold:
-                            if potential_attack_ips[ip]:
-                                potential_attack_ips[ip] = potential_attack_ips + 1
-                            else:
-                                potential_attack_ips[ip] = 1
+                        # Store timestamps
+                        failed_attempts[ip].append(now)
+                        failed_attempts[ip] = [t for t in failed_attempts[ip] if now - t < time_window]
+
+                        # Detect brute force attempts
+                        if len(failed_attempts[ip]) >= threshold:
+                            potential_attack_ips[ip] = potential_attack_ips.get(ip, 0) + 1
 
 
 
-                now = datetime.now()
-                formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-                print(f"=============== Report at {formatted} ===============")
-                for item in potential_attack_ips:
-                    print(f"ALERT: Potential brute-force attack from IP: {item.key} ({item.value} attempts in {threshold} minutes)")
+                now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                print(f"=============== Report at {now} ===============")
+                for ip, count in potential_attack_ips.items():
+                    print(f"ALERT: Potential brute-force attack from IP: {ip} ({count} attempts in {time_window // 60} minutes)")
 
             time.sleep(60) 
 
