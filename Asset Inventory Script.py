@@ -9,12 +9,10 @@ if platform.system() == "Windows":
     import winreg
 
 # Get list of active users
-def get_active_users():
-    # Run command to get list of active users
-    users = []
-    for user in os.popen('query user').readlines()[1:]:  # skip header line
-        users.append(user.split()[0])
-    return users
+def get_users():
+    output = subprocess.check_output(['net', 'users']).decode('utf-8')
+    users = [line.strip() for line in output.split('\n') if line.strip() and not line.startswith('The command completed successfully.')]
+    return {"active_users": users}
 
 # Get list of installed software (Windows only)
 def get_installed_software():
