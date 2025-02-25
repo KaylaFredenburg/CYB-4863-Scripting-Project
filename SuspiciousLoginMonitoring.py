@@ -19,14 +19,17 @@ def analyze_logs():
         log_output.write("Brute Force Detection Log\n")
         log_output.write("=" * 40 + "\n")
 
+    print("Testing... status will be output every 60 seconds")
     while True:
         try:
             with open(log_file, "r") as f, open(output_file, "a") as log_output:
                 potential_attack_ips = dict()
+                root_login_ips = dict()
                 for line in f:
-                    match = re.search(r"(?:Failed|failure|invalid).*?from\s+(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line, re.IGNORECASE)
-                    if match:
-                        ip = match.group("ip")
+                    # Check for failed logins of any account
+                    match_failed_logins = re.search(r"(?:Failed|failure|invalid).*?from\s+(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line, re.IGNORECASE)
+                    if match_failed_logins:
+                        ip = match_failed_logins.group("ip")
                         now = time.time()
 
                         # Store timestamps
@@ -37,12 +40,28 @@ def analyze_logs():
                         if len(failed_attempts[ip]) >= threshold:
                             potential_attack_ips[ip] = potential_attack_ips.get(ip, 0) + 1
 
+                    # Check for successful logins of root account
+                    match_root_logins = re.search(r"Accepted password for root from (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port \d+")
+                    if match_root_logins:
+                        ip = match_root_logins.group("ip")
+                        now = time.time()
+
+                        # Store timestamps
+                        match_root_logins[ip].append(now)
+                        match_root_logins[ip] = [t for t in failed_attempts[ip] if now - t < time_window]
+
+                        # Detect brute force attempts
+                        if len(match_root_logins[ip]):
+                            root_login_ips[ip] = root_login_ips.get(ip, 0) + 1
+
 
 
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 print(f"=============== Report at {now} ===============")
                 for ip, count in potential_attack_ips.items():
                     print(f"ALERT: Potential brute-force attack from IP: {ip} ({count} attempts in {time_window // 60} minutes)")
+                for ip, count in root_login_ips.items():
+                    print(f"ALERT: Successful root login from {ip} ({count} attempts in {time_window // 60} minutes)")
 
             time.sleep(60) 
 
