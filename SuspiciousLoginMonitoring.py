@@ -21,6 +21,7 @@ def analyze_logs():
     while True:
         try:
             with open(log_file, "r") as f, open(output_file, "a") as log_output:
+                potential_attack_ips = set()
                 for line in f:
                     match = re.search(r"(?:Failed|failure|invalid).*?from\s+(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line, re.IGNORECASE)
                     if match:
@@ -32,9 +33,11 @@ def analyze_logs():
                         failed_attempts[ip] = recent_attempts  
 
                         if len(recent_attempts) >= threshold:
-                            alert_msg = f"ALERT: Potential brute-force attack from IP: {ip}\n"
-                            print(alert_msg)  
-                            log_output.write(alert_msg) 
+                            potential_attack_ips.append(ip)
+
+                print(f"=============== Report at {now} ===============")
+                for item in potential_attack_ips:
+                    print(f"ALERT: Potential brute-force attack from IP: {item}")
 
             time.sleep(60) 
 
