@@ -1,0 +1,130 @@
+{
+    "timestamp": "2025-02-24 17:24:23.271622",
+    "os": "Windows 10.0.19045",
+    "active_users": {
+        "active_users": [
+            "User accounts for \\\\DESKTOP-PGR59Q7",
+            "-------------------------------------------------------------------------------",
+            "Administrator            DefaultAccount           Guest",
+            "student                  WDAGUtilityAccount"
+        ]
+    },
+    "installed_software": [
+        {
+            "name": "Microsoft Update Health Tools",
+            "version": "3.74.0.0"
+        },
+        {
+            "name": "QEMU guest agent",
+            "version": "106.0.1"
+        },
+        {
+            "name": "Red Hat QXL controller",
+            "version": "0.21.2.0"
+        },
+        {
+            "name": "Python 3.13.2 pip Bootstrap (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Python 3.13.2 Executables (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Python 3.13.2 Core Interpreter (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Python 3.13.2 Documentation (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Python 3.13.2 Development Libraries (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Python 3.13.2 Standard Library (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Virtio-win-driver-installer",
+            "version": "0.1.240"
+        },
+        {
+            "name": "Python 3.13.2 Tcl/Tk Support (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Update for x64-based Windows Systems (KB5001716)",
+            "version": "8.94.0.0"
+        },
+        {
+            "name": "Python 3.13.2 Test Suite (64-bit)",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Spice Agent 0.10.0-5 (64-bit)",
+            "version": "0.10.5"
+        },
+        {
+            "name": "Microsoft Edge",
+            "version": "133.0.3065.82"
+        },
+        {
+            "name": "Microsoft Edge WebView2 Runtime",
+            "version": "133.0.3065.82"
+        },
+        {
+            "name": "Python Launcher",
+            "version": "3.13.2150.0"
+        },
+        {
+            "name": "Virtio-win-guest-tools",
+            "version": "0.1.240"
+        }
+    ],
+    "missing_security_patches": [
+        "HotFixID   InstalledOn",
+        "KB5049621  2/22/2025",
+        "KB5049613  2/21/2025",
+        "KB5011048  2/21/2025",
+        "KB5015684  5/5/2023",
+        "KB5033052  2/21/2025",
+        "KB5051974  2/21/2025",
+        "KB5014032  5/5/2023",
+        "KB5025315  5/5/2023",
+        "KB5050111  2/21/2025"
+    ],
+    "usb_history": [
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Root Hub"
+        },
+        {
+            "name": "USB Input Device"
+        },
+        {
+            "error": "[WinError 2] The system cannot find the file specified"
+        }
+    ]
+}
