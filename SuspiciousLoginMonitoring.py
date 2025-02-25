@@ -1,5 +1,6 @@
 import re
 import time
+from datetime import datetime
 from collections import defaultdict
 
 # Log file path
@@ -21,7 +22,7 @@ def analyze_logs():
     while True:
         try:
             with open(log_file, "r") as f, open(output_file, "a") as log_output:
-                potential_attack_ips = set()
+                potential_attack_ips = dict()
                 for line in f:
                     match = re.search(r"(?:Failed|failure|invalid).*?from\s+(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line, re.IGNORECASE)
                     if match:
@@ -33,11 +34,18 @@ def analyze_logs():
                         failed_attempts[ip] = recent_attempts  
 
                         if len(recent_attempts) >= threshold:
-                            potential_attack_ips.append(ip)
+                            if potential_attack_ips[ip]:
+                                potential_attack_ips[ip] = potential_attack_ips + 1
+                            else:
+                                potential_attack_ips[ip] = 1
 
-                print(f"=============== Report at {now} ===============")
+
+
+                now = datetime.now()
+                formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+                print(f"=============== Report at {formatted} ===============")
                 for item in potential_attack_ips:
-                    print(f"ALERT: Potential brute-force attack from IP: {item}")
+                    print(f"ALERT: Potential brute-force attack from IP: {item.key} ({item.value} attempts in {threshold} minutes)")
 
             time.sleep(60) 
 
