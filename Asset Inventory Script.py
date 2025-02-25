@@ -122,7 +122,7 @@ def main():
     system_info = {
         "timestamp": str(datetime.now()),
         "os": platform.system() + " " + platform.version(),
-        "active_users": get_active_users(),
+        "active_users": get_users(),
         "installed_software": get_installed_software(),
         "missing_security_patches": get_missing_security_patches(),
         "usb_history": get_usb_history()
