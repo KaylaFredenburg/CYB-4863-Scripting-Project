@@ -68,29 +68,51 @@ def get_missing_security_patches():
         patches.append(f"Error: {str(e)}")
     return patches
 
-# Get list of previously connected USB devices
+# Get list of previously connected USB devices (Windows only)
 def get_usb_history():
-    # Run the wmic command to get a list of USB devices
-    output = subprocess.check_output("wmic path Win32_PnPEntity where \"Caption like '%USB%'\" get /value", shell=True).decode('utf-8')
-
-    # Split the output into individual devices
-    devices = output.split("\n\n")
-
-    # Create a list to store the device information
-    usb_devices = []
-
-    # Iterate through the devices and extract the information
-    for device in devices:
-        if device.strip():
-            lines = device.split("\n")
-            device_info = {}
-            for line in lines:
-                if line.strip():
-                    key, value = line.split("=")
-                    device_info[key.strip()] = value.strip()
-            usb_devices.append(device_info)
-
-    return usb_devices
+    # Check if running on Windows
+    if platform.system() != "Windows":
+        return ["Not supported on this OS"]
+    
+    # Initialize USB device list
+    usb_list = []
+    # Define registry path to check
+    reg_paths = [r"SYSTEM\CurrentControlSet\Enum\USB", r"SYSTEM\CurrentControlSet\Enum\USB4"]
+    
+    try:
+        for reg_path in reg_paths:
+            # Open registry key
+            with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, reg_path) as reg:
+                # Loop through subkeys
+                for i in range(0, winreg.QueryInfoKey(reg)[0]):
+                    try:
+                        # Get subkey name
+                        subkey_name = winreg.EnumKey(reg, i)
+                        # Open subkey
+                        with winreg.OpenKey(reg, subkey_name) as subkey:
+                            # Loop through sub-subkeys
+                            for j in range(0, winreg.QueryInfoKey(subkey)[0]):
+                                try:
+                                    # Get sub-subkey name
+                                    subsubkey_name = winreg.EnumKey(subkey, j)
+                                    # Open sub-subkey
+                                    with winreg.OpenKey(subkey, subsubkey_name) as subsubkey:
+                                        # Get USB device name
+                                        name, _ = winreg.QueryValueEx(subsubkey, "DeviceDesc")
+                                        name_sections = name.split(";")
+                                        name = name_sections[-1]
+                                        # Add to USB list
+                                        usb_list.append({"name": name})
+                                except EnvironmentError:
+                                    # Skip if error occurs
+                                    continue
+                    except EnvironmentError:
+                        # Skip if error occurs
+                        continue
+    except Exception as e:
+        # Add error to software list
+        usb_list.append({"error": str(e)})
+    return usb_list
 
 # Main function
 def main():
