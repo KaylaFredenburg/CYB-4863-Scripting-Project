@@ -41,7 +41,7 @@ def analyze_logs():
                             potential_attack_ips[ip] = potential_attack_ips.get(ip, 0) + 1
 
                     # Check for successful logins of root account
-                    match_root_logins = re.search(r"Accepted password for root from (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port \d+")
+                    match_root_logins = re.search(r"Accepted password for root from (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port \d+", line, re.IGNORECASE)
                     if match_root_logins:
                         ip = match_root_logins.group("ip")
                         now = time.time()
@@ -58,10 +58,16 @@ def analyze_logs():
 
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 print(f"=============== Report at {now} ===============")
-                for ip, count in potential_attack_ips.items():
-                    print(f"ALERT: Potential brute-force attack from IP: {ip} ({count} attempts in {time_window // 60} minutes)")
-                for ip, count in root_login_ips.items():
-                    print(f"ALERT: Successful root login from {ip} ({count} attempts in {time_window // 60} minutes)")
+                if potential_attack_ips:
+                    for ip, count in potential_attack_ips.items():
+                        print(f"ALERT: Potential brute-force attack from IP: {ip} ({count} attempts in {time_window // 60} minutes)")
+                else:
+                    print(f"No failed login attempts in the last {time_window // 60} minutes")
+                if root_login_ips:
+                    for ip, count in root_login_ips.items():
+                        print(f"ALERT: Successful root login from {ip} ({count} attempts in {time_window // 60} minutes)")
+                else:
+                    print(f"No successful root user logins in the last {time_window // 60} minutes")
 
             time.sleep(60) 
 
