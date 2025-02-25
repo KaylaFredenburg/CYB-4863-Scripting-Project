@@ -22,7 +22,7 @@ def analyze_logs():
         try:
             with open(log_file, "r") as f, open(output_file, "a") as log_output:
                 for line in f:
-                    match = re.search(r"(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).*(Failed|failure|invalid) password", line, re.IGNORECASE)
+                    match = re.search(r"(?:Failed|failure|invalid).*?from\s+(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line, re.IGNORECASE)
                     if match:
                         ip = match.group("ip")
                         failed_attempts[ip].append(time.time())
