@@ -14,14 +14,18 @@ Automated detection of security gaps enhances system monitoring by improving sca
 ## Scripts Used
 
 ### Preparation Script
+Asset Inventory Script.py
 
 ### Detection Script
+SuspiciousLoginMonitoring.py
 
 ## Findings
 
 ### System Information Gathering
+AssetInventoryOutput.json
 
 ### Failed Login Attempts Detection
+detection_log.txt
 
 ## Reflections
 
