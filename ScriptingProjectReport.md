@@ -22,10 +22,10 @@ Automated detection of security gaps enhances system monitoring by improving sca
 ## Findings
 
 ### System Information Gathering
-AssetInventoryOutput.json
+[AssetInventoryOutput.json](https://github.com/KaylaFredenburg/CYB-4863-Scripting-Project/blob/main/AssetInventoryOutput.json)
 
 ### Failed Login Attempts Detection
-detection_log.txt
+[login-script-output.png](https://github.com/KaylaFredenburg/CYB-4863-Scripting-Project/blob/main/login-script-output.png)
 
 ## Reflections
 
